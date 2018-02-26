@@ -1,0 +1,16 @@
+branch-defaults:
+  master:
+    environment: places-service-dev
+environment-defaults:
+  route-manager-dev:
+    branch: null
+    repository: null
+deploy:
+  artifact: target/build.zip
+global:
+  application_name: places-service
+  default_ec2_keyname: torchbearer
+  default_platform: 64bit Amazon Linux 2017.03 v2.6.0 running Docker 1.12.6
+  default_region: us-west-2
+  profile: torchbearer
+  sc: git

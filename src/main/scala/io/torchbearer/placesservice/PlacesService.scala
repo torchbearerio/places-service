@@ -1,37 +1,40 @@
-package io.torchbearer.streetviewloader
+package io.torchbearer.placesservice
 
 import io.torchbearer.ServiceCore.AWSServices.SFN.getTaskForActivityArn
 import io.torchbearer.ServiceCore.{Constants, TorchbearerDB}
+import io.torchbearer.placesservice.PlacesAPIService
 import org.json4s.jackson.JsonMethods._
 import org.json4s.DefaultFormats
 
 import scala.concurrent.{Future, blocking}
 import scala.concurrent.ExecutionContext.Implicits.global
 
-object StreetviewLoader extends App {
+object PlacesService extends App {
   implicit val formats = DefaultFormats
 
-  println("Welcome to streetview-loader")
+  println("Welcome to places-service")
 
   // Initialize core services
   TorchbearerDB.init()
 
-  //val loadTask = new StreetviewLoadTask(437, 56, "sdfsf")
-  //loadTask.run()
+  //val placesTask = new PlacesTask(246, 56, "sdfsf")
+  //placesTask.run()
 
   while (true) {
-    println("here")
-    val task = getTaskForActivityArn(Constants.ActivityARNs("STREETVIEW_IMAGE_LOAD"))
+    println("Waiting for task...")
+    val task = getTaskForActivityArn(Constants.ActivityARNs("DB_DESCRIPTION"))
 
     // If no tasks were returned, exit
-    if (task.getTaskToken != "") {
+    if (task.getTaskToken != null) {
 
       val input = parse(task.getInput)
       val epId = (input \ "epId").extract[Int]
       val hitId = (input \ "hitId").extract[Int]
       val taskToken = task.getTaskToken
 
-      val loadTask = new StreetviewLoadTask(epId, hitId, taskToken)
+      val loadTask = new PlacesTask(epId, hitId, taskToken)
+
+      println(s"Starting places task for epId $epId hit $hitId")
 
       Future {
         blocking {

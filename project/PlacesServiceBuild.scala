@@ -8,7 +8,7 @@ import sbtassembly.AssemblyKeys._
 import sbtassembly.AssemblyPlugin._
 import sbtassembly.{MergeStrategy, PathList}
 
-object StreetviewLoaderBuild extends Build {
+object PlacesServiceBuild extends Build {
 
   // Scala version used
   val buildScalaVersion = "2.11.5"
@@ -21,14 +21,14 @@ object StreetviewLoaderBuild extends Build {
   )
 
   // The default project
-  lazy val streetviewloader = Project(
-    id = "streetview-loader",
+  lazy val placesService = Project(
+    id = "places-service",
     base = file("."),
     settings = StandardSettings ++ tsAssemblySettings ++ Seq(
-      description := "Streetview Loader",
+      description := "Places Service",
       libraryDependencies ++= additionalComponents, // See below
       resolvers ++= ExtraResolvers,
-      mainClass in(Compile, run) := Some("io.torchbearer.streetviewloader.StreetviewLoader"),
+      mainClass in(Compile, run) := Some("io.torchbearer.placesservice.PlacesService"),
       dockerSettings
     )
   ).dependsOn(core).enablePlugins(DockerPlugin)
@@ -56,7 +56,7 @@ object StreetviewLoaderBuild extends Build {
   val tsAssemblySettings = assemblySettings ++ Seq(
     assemblyOutputPath in assembly := file("target/build.jar"),
     assemblyJarName in assembly := "build.jar",
-    mainClass in assembly := Some("io.torchbearer.streetviewloader.StreetviewLoader")
+    mainClass in assembly := Some("io.torchbearer.placesservice.PlacesService")
   )
 
   // ------------------------------------------
@@ -71,7 +71,7 @@ object StreetviewLoaderBuild extends Build {
 
   // To enable a component remove the //
   val additionalComponents =
-  Seq(akka, simplelatlng)
+  Seq(akka, simplelatlng, foursquare)
 
 
   // ------------------------------------------
@@ -81,6 +81,9 @@ object StreetviewLoaderBuild extends Build {
   // Other components
   lazy val akka = "com.typesafe.akka" %% "akka-actor" % "2.5.0"
   lazy val simplelatlng = "com.javadocmd" % "simplelatlng" % "1.3.1"
+  lazy val fb4j = "org.facebook4j" % "facebook4j-core" % "2.4.10"
+  lazy val gMaps = "se.walkercrou" % "google-places-api-java" % "2.1.7"
+  lazy val foursquare = "me.atlis" % "foursquare-api" % "1.0.6"
 
   // Additional repos, required by some components
   final val ExtraResolvers = Seq(
