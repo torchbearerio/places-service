@@ -2,7 +2,7 @@ package io.torchbearer.placesservice
 
 import com.javadocmd.simplelatlng.util.LengthUnit
 import io.torchbearer.ServiceCore.Orchestration.Task
-import io.torchbearer.ServiceCore.DataModel.{ExecutionPoint, Landmark, StreetviewImage}
+import io.torchbearer.ServiceCore.DataModel.{ExecutionPoint, Landmark, LandmarkStatus, StreetviewImage}
 import io.torchbearer.ServiceCore.AWSServices.S3
 import com.javadocmd.simplelatlng.{LatLng, LatLngTool}
 import com.amazonaws.services.s3.model.{ObjectMetadata, PutObjectRequest}
@@ -30,6 +30,7 @@ class PlacesTask(epId: Int, hitId: Int, taskToken: String)
         val category = place.venue.getCategories.find(c => c.getPrimary).map(c => c.getName) getOrElse {
           if (place.venue.getCategories.length > 0) place.venue.getCategories.head.getName else ""
         }
+        landmark.status = LandmarkStatus.VERIFIED
         landmark.description = Some(s"${place.venue.getName} $category")
         landmark.semanticSaliencyScore = place.venue.getStats.getCheckinsCount.toDouble
         landmark.relativeBearing = Some(place.relativeBearing)
